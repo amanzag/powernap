@@ -1,3 +1,9 @@
+powernap (2.21-amanzag1) UNRELEASED; urgency=medium
+
+  * Make WoLMonitor listen to all interfaces instead of only eth*
+
+ -- Alberto Manzaneque <amanzag@gmail.com>  Fri, 08 Dec 2017 00:59:25 +0100
+
 powernap (2.21) unreleased; urgency=medium
 
   * UNRELEASED

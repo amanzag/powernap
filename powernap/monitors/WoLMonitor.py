@@ -43,15 +43,13 @@ def get_local_wol_data(mac):
 # Obtain a list of available eth's, with its MAC address and WoL data.
 def get_eths_mac_wol_info():
     ifaces = []
-    prefix = re.compile("eth")
     dirs = os.listdir("/sys/class/net")
     for iface in dirs:
-        if prefix.search(iface):
-            # Obtain MAC address
-            mac = get_mac_address(iface)
-            # Obtain WoL data of eth
-            data = get_local_wol_data(mac)
-            ifaces.append({"iface":iface, "mac":mac, "wol":data})
+        # Obtain MAC address
+        mac = get_mac_address(iface)
+        # Obtain WoL data of eth
+        data = get_local_wol_data(mac)
+        ifaces.append({"iface":iface, "mac":mac, "wol":data})
     return ifaces
 
 # Monitor plugin
@@ -97,12 +95,12 @@ class WoLMonitor (threading.Thread):
         #while isRunning:
         while self._running:
             try:
-                #debug(logging.DEBUG, "    WoL monitor started at port [%s]" % port)
+                debug("    WoL monitor started at port [%s]" % port)
                 recv_wol_msg, address = s.recvfrom(1024)
-                #debug(logging.DEBUG, "    WoL packet received from %s" % address[0])
+                debug("    WoL packet received from %s" % address[0])
                 for iface in ifaces:
                     if recv_wol_msg == iface["wol"]:
-                        #debug(logging.DEBUG, "    WoL data matches local interface [%s]" % iface["iface"])
+                        debug("    WoL data matches local interface [%s]" % iface["iface"])
                         self._data_received = True
                         #isRunning = False
 			# TODO: Should return signal to daemon and wake up???
