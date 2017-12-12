@@ -95,7 +95,7 @@ class WoLMonitor (threading.Thread):
         #while isRunning:
         while self._running:
             try:
-                debug("    WoL monitor started at port [%s]" % port)
+                debug("    WoL monitor started at port [%s]" % self._port)
                 recv_wol_msg, address = s.recvfrom(1024)
                 debug("    WoL packet received from %s" % address[0])
                 for iface in ifaces:

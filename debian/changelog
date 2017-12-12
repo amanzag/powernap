@@ -1,4 +1,4 @@
-powernap (2.21-amanzag1) UNRELEASED; urgency=medium
+powernap (2.21-amanzag2) UNRELEASED; urgency=medium
 
   * Make WoLMonitor listen to all interfaces instead of only eth*
 
