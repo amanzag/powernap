@@ -1,8 +1,11 @@
-powernap (2.22) UNRELEASED; urgency=medium
+powernap (2.22-0ubuntu1) groovy; urgency=medium
 
+  [ Alberto Manzaneque ]
   * Fix InputMonitor so that it support devide disconnect/reconnect
+  * Make sure powernapd stops when it gets killed
+  * Undaemonize
 
- -- Alberto Manzaneque <amanzag@gmail.com>  Tue, 09 Mar 2021 12:33:32 +0100
+ -- Alberto Manzaneque <amanzag@gmail.com>  Tue, 09 Mar 2021 16:40:26 +0100
 
 powernap (2.21-0ubuntu1) groovy; urgency=medium
 
