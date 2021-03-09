@@ -86,23 +86,24 @@ class InputMonitor ( threading.Thread ):
 
     # Monitor /dev/input
     def run ( self ):
-
-        # Poll for events
-        while self._running:
-            res = self._poll.poll(30000)
-            if ( res ):
-                for fd, e in res:
-                    if e & (select.POLLIN|select.POLLPRI):
-                        os.read(fd, 32768) # Read what is there!
-                        self._input_received = True
-                    elif e & (select.POLLERR):
-                        for path, fd in self._inputs.items():
-                            self._poll.unregister(fd);
-                            fd.close()
-                        self._inputs.clear()
-            elif not self._inputs:
-                self._update_inputs()
-
+        try:
+            # Poll for events
+            while self._running:
+                res = self._poll.poll(5000)
+                if ( res ):
+                    for fd, e in res:
+                        if e & (select.POLLIN|select.POLLPRI):
+                            os.read(fd, 32768) # Read what is there!
+                            self._input_received = True
+                        elif e & (select.POLLERR):
+                            for path, fd in self._inputs.items():
+                                self._poll.unregister(fd);
+                                fd.close()
+                            self._inputs.clear()
+                elif not self._inputs:
+                    self._update_inputs()
+        except SystemExit:
+            pass
     def active(self):
         if self._input_received:
             self._input_received = False

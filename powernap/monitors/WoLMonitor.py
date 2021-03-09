@@ -70,45 +70,36 @@ class WoLMonitor (threading.Thread):
 
     # Start thread
     def start ( self ):
-      self._running = True
-      threading.Thread.start(self)
+        self._running = True
+        threading.Thread.start(self)
 
     # Stop thread
     def stop ( self ): self._running = False
 
     # Open port and wait for data (any data will trigger the monitor)
     def run ( self ):
-
-        isRunning = False
-        #self._port = 7
         ifaces = get_eths_mac_wol_info()
-
-        # Prepare the socket and bind port
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         try:
             s.bind((self._host, self._port))
-            isRunning = True
         except:
-            #error("Unable to bind port [%s]" % port)
+            error("Unable to bind port [%s]" % port)
             return
-
-        #while isRunning:
-        while self._running:
-            try:
-                debug("    WoL monitor started at port [%s]" % self._port)
-                recv_wol_msg, address = s.recvfrom(1024)
-                debug("    WoL packet received from %s" % address[0])
-                for iface in ifaces:
-                    if recv_wol_msg == iface["wol"]:
-                        debug("    WoL data matches local interface [%s]" % iface["iface"])
-                        self._data_received = True
-                        #isRunning = False
-			# TODO: Should return signal to daemon and wake up???
-                        #break
-            except (KeyboardInterrupt, SystemExit):
-                raise
-            except:
-                traceback.print_exc()
+        s.settimeout(5)
+        try:
+            debug("    WoL monitor started at port [%s]" % self._port)
+            while self._running:
+                try:
+                    recv_wol_msg, address = s.recvfrom(1024)
+                    debug("    WoL packet received from %s" % address[0])
+                    for iface in ifaces:
+                        if recv_wol_msg == iface["wol"]:
+                            debug("    WoL data matches local interface [%s]" % iface["iface"])
+                            self._data_received = True
+                except socket.timeout:
+                    pass
+        except SystemExit:
+            pass
 
     def active(self):
         if self._data_received:

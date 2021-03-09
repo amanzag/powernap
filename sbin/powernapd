@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python2
 #
 #    powernapd - monitor a system process table; if IDLE amount of time
 #               goes by with no MONITORED_PROCESSES running, run ACTION
@@ -42,10 +42,11 @@ except:
     sys.exit(1)
 
 # Define globals
-global LOCK, CONFIG, MONITORS
+global LOCK, CONFIG, MONITORS, RUNNING
 LOCK = "/var/run/%s.pid" % powernap.PKG
 LOG = "/var/log/%s.log" % powernap.PKG
 POWERSAVE_FLAG = "/var/run/%s/powersave" % powernap.PKG
+RUNNING = False
 
 logging.basicConfig(filename=LOG, format='%(asctime)s %(levelname)-8s %(message)s', datefmt='%Y-%m-%d_%H:%M:%S', level=logging.DEBUG,)
 
@@ -88,6 +89,14 @@ def signal_handler(signal, frame):
     if os.path.exists(LOCK):
         os.remove(LOCK)
     debug(logging.INFO, "Stopping %s" % powernap.PKG)
+    RUNNING = False
+    debug(logging.INFO, MONITORS)
+    for monitor in MONITORS:
+        try:
+            debug(logging.DEBUG, "Stopping [%s:%s]" % (monitor._type, monitor._name))
+            monitor.stop()
+        except AttributeError:
+            pass # monitor does not have a stop method
     sys.exit(1)
 
 # Handler warns users when an USB Input device has been connected or
@@ -207,7 +216,8 @@ def powernapd_loop():
     users_warned = False
     watch_config_timestamp = os.stat(powernap.CONFIG).st_mtime
 
-    while 1:
+    RUNNING = True
+    while RUNNING:
         if powernap.WATCH_CONFIG == True:
             if watch_config_timestamp != os.stat(powernap.CONFIG).st_mtime:
                 # TODO: This only reloads general settings. Does not restart monitors.
