@@ -89,7 +89,7 @@ class InputMonitor ( threading.Thread ):
 
         # Poll for events
         while self._running:
-            res = self._poll.poll(1000)
+            res = self._poll.poll(30000)
             if ( res ):
                 for fd, e in res:
                     if e & (select.POLLIN|select.POLLPRI):
