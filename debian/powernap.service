@@ -3,11 +3,8 @@ Description=PowerNap
 After=networking.service
 
 [Service]
-Type=forking
-PIDFile=/var/run/powernap.pid
 ExecStartPre=/usr/share/powernap/powernap-ethtool
 ExecStart=/usr/sbin/powernapd
-ExecStop=-/usr/sbin/powerwake-now
 
 [Install]
 WantedBy=multi-user.target
